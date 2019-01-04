@@ -1,0 +1,26 @@
+{
+  "name": "listing-details-proxy",
+  "version": "1.0.0",
+  "description": "Proxy server for listing details sidebar on Streeteasy item page",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "proxy-dev": "nodemon ./proxy.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Team-Elysium/listing-details-proxy.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Team-Elysium/listing-details-proxy/issues"
+  },
+  "homepage": "https://github.com/Team-Elysium/listing-details-proxy#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "http-proxy-middleware": "^0.19.1",
+    "nodemon": "^1.18.9"
+  }
+}

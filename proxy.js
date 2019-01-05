@@ -1,6 +1,7 @@
 const express = require('express');
 const proxy = require('http-proxy-middleware');
 const bodyParser = require('body-parser');
+const path = require('path');
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -8,8 +9,7 @@ app.use(bodyParser.json());
 
 app.use("/:id", express.static(path.join(__dirname, "./client")));
 
-app.use("/api/details",
-    proxy({ target: "http://ec2-18-218-63-198.us-east-2.compute.amazonaws.com/" }));
+app.use("/api/details", proxy({ target: "http://ec2-18-218-63-198.us-east-2.compute.amazonaws.com/" }));
 
 app.use("/api/carousel",
     proxy({ target: "http://ec2-18-223-116-251.us-east-2.compute.amazonaws.com/" }));

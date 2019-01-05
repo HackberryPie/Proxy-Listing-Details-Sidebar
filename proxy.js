@@ -17,7 +17,7 @@ app.use("/api/carousel",
 app.use("/api/similarlistings",
     proxy({ target: "http://ec2-54-174-166-132.compute-1.amazonaws.com/" }));
 
-app.use("/streetBreezy/api/description",
+app.use("/api/description",
     proxy({ target: "http://ec2-18-218-251-40.us-east-2.compute.amazonaws.com:3009/"}));
 
 app.listen(3000, () => console.log('Proxy Server connected!'));

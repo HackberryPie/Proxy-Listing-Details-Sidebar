@@ -1,26 +1,40 @@
 {
-  "name": "listing-details-proxy",
+  "name": "streeteasy-listing-proxy-server-jte",
   "version": "1.0.0",
-  "description": "Proxy server for listing details sidebar on Streeteasy item page",
-  "main": "index.js",
+  "description": "Proxy Server For StreetEasy Style Item Listing Page",
+  "main": "/server/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "proxy-dev": "nodemon ./proxy.js"
+    "start-dev": "nodemon server/index.js -e js,ejs,json",
+    "start": "node server/httpServer.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Team-Elysium/listing-details-proxy.git"
+    "url": "git+https://github.com/Team-Elysium/streeteasy-listing-proxy-server-jte.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Jared Ellison",
+  "license": "UNLICENSED",
   "bugs": {
-    "url": "https://github.com/Team-Elysium/listing-details-proxy/issues"
+    "url": "https://github.com/Team-Elysium/streeteasy-listing-proxy-server-jte/issues"
   },
-  "homepage": "https://github.com/Team-Elysium/listing-details-proxy#readme",
+  "homepage": "https://github.com/Team-Elysium/streeteasy-listing-proxy-server-jte#readme",
+  "devDependencies": {
+    "eslint": "^5.10.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-prettier": "^3.0.0",
+    "eslint-plugin-react": "^7.11.1",
+    "prettier": "^1.15.3"
+  },
   "dependencies": {
+    "axios": "^0.18.0",
     "body-parser": "^1.18.3",
+    "compression": "^1.7.3",
+    "dotenv": "^6.2.0",
+    "ejs": "^2.6.1",
     "express": "^4.16.4",
-    "http-proxy-middleware": "^0.19.1",
-    "nodemon": "^1.18.9"
+    "morgan": "^1.9.1"
   }
 }

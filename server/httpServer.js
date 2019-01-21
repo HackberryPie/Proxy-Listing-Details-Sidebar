@@ -47,7 +47,6 @@ const requestHandler = (client_req, client_res) => {
   }
 
   if (client_req.url === '/metrics') {
-    console.log('hit');
     return metrics.serveMetrics(client_req, client_res);
   }
 

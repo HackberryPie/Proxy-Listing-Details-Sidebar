@@ -39,14 +39,15 @@ const isGoodUrl = (url) => {
 
 const requestHandler = (client_req, client_res) => {
   const apiRequestTimer = metrics.apiRequestDurationMicroseconds.startTimer();
-  const fileRequestsTimer = metrics.staticFileRequestDurationMicroseconds.startTimer();
+  const fileRequestTimer = metrics.staticFileRequestDurationMicroseconds.startTimer();
   metrics.totalRequests.inc();
   //STATIC ASSETS
   if (isStatic(client_req.url)) {
-    return serveStatic(client_req, client_res);
+    return serveStatic(client_req, client_res, fileRequestTimer);
   }
 
   if (client_req.url === '/metrics') {
+    console.log('hit');
     return metrics.serveMetrics(client_req, client_res);
   }
 
@@ -100,14 +101,14 @@ const requestHandler = (client_req, client_res) => {
       client_req,
       client_res
     );
-    fileRequestsTimer();
+    fileRequestTimer();
     client_res.end();
   }
 };
 
 //handle static assets
 const basePath = './public';
-const serveStatic = (req, res) => {
+const serveStatic = (req, res, timer) => {
   const resolvedBase = path.resolve(basePath);
   const safeSuffix = path.normalize(req.url).replace(/^(\.\.[\/\\])+/, '');
   const fileLoc = path.join(resolvedBase, safeSuffix);
@@ -121,7 +122,7 @@ const serveStatic = (req, res) => {
       req,
       res
     );
-    fileRequestsTimer();
+    timer();
     return res.end();
   }
 
@@ -143,7 +144,7 @@ const serveStatic = (req, res) => {
       req,
       res
     );
-    fileRequestsTimer();
+    timer();
     return res.end();
   });
 };

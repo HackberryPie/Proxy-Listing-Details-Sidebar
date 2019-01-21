@@ -1,9 +1,13 @@
 const http = require('http');
 const path = require('path');
 const fs = require('fs');
+
+const prometheus = require('prom-client');
+const metrics = require('./prometheus.js');
+
 const port = 4000;
 
-const cache = {};
+const staticFileCache = {};
 
 let html;
 
@@ -34,9 +38,16 @@ const isGoodUrl = (url) => {
 };
 
 const requestHandler = (client_req, client_res) => {
+  const apiRequestTimer = metrics.apiRequestDurationMicroseconds.startTimer();
+  const fileRequestsTimer = metrics.staticFileRequestDurationMicroseconds.startTimer();
+  metrics.totalRequests.inc();
   //STATIC ASSETS
   if (isStatic(client_req.url)) {
     return serveStatic(client_req, client_res);
+  }
+
+  if (client_req.url === '/metrics') {
+    return metrics.serveMetrics(client_req, client_res);
   }
 
   //PROXY EVERYTHING ELSE
@@ -54,14 +65,23 @@ const requestHandler = (client_req, client_res) => {
     }
     proxyOptions.hostname = HOSTNAMEURL;
     proxyOptions.path = client_req.url;
+
     const proxy = http.request(proxyOptions, (res) => {
       res.pipe(
         client_res,
         { end: true }
       );
+      metrics.histogramLabels(
+        metrics.apiRequestDurationMicroseconds,
+        client_req,
+        res
+      );
+      apiRequestTimer();
+      metrics.successCount.inc();
     });
 
     proxy.on('error', (err) => {
+      metrics.failureCount.inc();
       console.log(err);
     });
     if (HOSTNAMEURL !== '') {
@@ -74,6 +94,13 @@ const requestHandler = (client_req, client_res) => {
     //INITIAL REQUEST
     client_res.writeHead(200, { 'Content-Type': 'text/html' });
     client_res.write(html);
+    metrics.successCount.inc();
+    metrics.histogramLabels(
+      metrics.apiRequestDurationMicroseconds,
+      client_req,
+      client_res
+    );
+    fileRequestsTimer();
     client_res.end();
   }
 };
@@ -85,9 +112,16 @@ const serveStatic = (req, res) => {
   const safeSuffix = path.normalize(req.url).replace(/^(\.\.[\/\\])+/, '');
   const fileLoc = path.join(resolvedBase, safeSuffix);
 
-  if (cache[fileLoc] !== undefined) {
+  if (staticFileCache[fileLoc] !== undefined) {
     res.statusCode = 200;
-    res.write(cache[fileLoc]);
+    res.write(staticFileCache[fileLoc]);
+    metrics.successCount.inc();
+    metrics.histogramLabels(
+      metrics.staticFileRequestDurationMicroseconds,
+      req,
+      res
+    );
+    fileRequestsTimer();
     return res.end();
   }
 
@@ -95,13 +129,21 @@ const serveStatic = (req, res) => {
     if (err) {
       res.writeHead(404);
       res.write('ERROR 404: Not found');
+
       return res.end;
     }
 
-    cache[fileLoc] = data;
+    staticFileCache[fileLoc] = data;
 
     res.statusCode = 200;
     res.write(data);
+    metrics.successCount.inc();
+    metrics.histogramLabels(
+      metrics.staticFileRequestDurationMicroseconds,
+      req,
+      res
+    );
+    fileRequestsTimer();
     return res.end();
   });
 };

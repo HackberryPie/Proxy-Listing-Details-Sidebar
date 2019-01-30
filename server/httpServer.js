@@ -130,7 +130,7 @@ const serveStatic = (req, res, timer) => {
       res.writeHead(404);
       res.write('ERROR 404: Not found');
 
-      return res.end;
+      return res.end();
     }
 
     staticFileCache[fileLoc] = data;

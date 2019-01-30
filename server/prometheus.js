@@ -21,7 +21,7 @@ prometheusExporter.apiRequestDurationMicroseconds = new prometheus.Histogram({
   name: 'api_request_duration_ms',
   help: 'Duration of API requests in ms',
   labelNames: ['method', 'route', 'code'],
-  buckets: [0.1, 5, 15, 50, 100, 200, 300, 400, 500]
+  buckets: [0.0001, 0.001, 0.0025, 0.005, 0.01, 0.02, 0.03, 0.05, 1]
 });
 
 prometheusExporter.staticFileRequestDurationMicroseconds = new prometheus.Histogram(
@@ -29,7 +29,17 @@ prometheusExporter.staticFileRequestDurationMicroseconds = new prometheus.Histog
     name: 'static_file_request_duration_ms',
     help: 'Duration of Static File requests in ms',
     labelNames: ['method', 'route', 'code'],
-    buckets: [0.1, 5, 15, 50, 100, 200, 300, 400, 500]
+    buckets: [
+      0.000001,
+      0.000005,
+      0.000015,
+      0.000025,
+      0.00005,
+      0.0001,
+      0.00025,
+      0.0005,
+      0.001
+    ]
   }
 );
 
